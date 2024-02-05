@@ -3,9 +3,6 @@ signupForm.addEventListener("submit", submitForm);
 
 async function submitForm(e) {
     e.preventDefault();
-    // if (!validateForm()) {
-    //     return;
-    // }
     var formData = new FormData(signupForm);
     let dataObj = Object.fromEntries(formData);
     dataObj['type'] = document.getElementById("type").value;
@@ -36,21 +33,3 @@ async function submitForm(e) {
         console.error("Error:", error);
     }
 }
-
-// function validateForm() {
-//     var email = document.getElementsByName('email').value;
-//     var password = document.getElementByName('password').value;
-
-//     var emailRegex = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,})+$/;
-//     var passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
-
-//     if (!emailRegex.test(email)) {
-//         alert('Please enter a valid email address');
-//         return false;
-//     }
-//     if (!passwordRegex.test(password)) {
-//         alert('Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, and one number');
-//         return false;
-//     }
-//     return true;
-// }
