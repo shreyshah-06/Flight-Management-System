@@ -174,7 +174,7 @@ class User:
             return jsonify({"error": "User not logged in"}), 401
     
         user_email = session['user']['email']
-
+        # print("here")
         try:
             user = db.users.find_one({"email": user_email})
             if not user:

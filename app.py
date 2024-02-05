@@ -1,7 +1,9 @@
 from flask import Flask,render_template,redirect,session
 from functools import wraps
+from flask_cors import CORS
 import pymongo
 app = Flask(__name__)
+CORS(app)
 secretKey = b'\xab\x88\x9c\xcb\x853\xea\r\xdc>\x0eY\xb5|\xc4\xd1'
 app.secret_key=secretKey
 client = pymongo.MongoClient('localhost',27017)
