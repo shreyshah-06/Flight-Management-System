@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signup Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: rgb(171, 171, 171);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .card {
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .field-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .field-label {
+            flex: 1;
+            margin-right: 10px;
+        }
+
+        .field {
+            flex: 2;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+            width: 100%;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>Signup Page</h1>
+        <form name="signupForm" id="signupForm">
+            <div class="field-group">
+                <label for="name" class="field-label">Name:</label>
+                <input type="text" name="name" class="field" required>
+            </div>
+            <div class="field-group">
+                <label for="email" class="field-label">Email:</label>
+                <input type="email" name="email" class="field" required>
+            </div>
+            <div class="field-group">
+                <label for="password" class="field-label">Password:</label>
+                <input type="password" name="password" class="field" required>
+            </div>
+            <div class="field-group">
+                <label for="type" class="field-label">Type:</label>
+                <select id="type" name="type" class="field">
+                    <option value="user" selected="selected">User</option>
+                    <option value="admin">Admin</option>
+                </select>
+            </div>
+            <p class="errorHidden"></p>
+            <input type="submit" value="SignUp" class="btn">
+        </form>
+    </div>
+</body>
+</html>

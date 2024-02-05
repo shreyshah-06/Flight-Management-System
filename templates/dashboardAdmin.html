@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: rgb(171, 171, 171);
+      }
+
+      .container {
+        max-width: 800px;
+        margin: 20px auto;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+
+      h1 {
+        text-align: center;
+        color: #333;
+      }
+
+      .section {
+        margin-bottom: 20px;
+        padding: 20px;
+        background-color: #f9f9f9;
+        border-radius: 8px;
+      }
+
+      input[type="text"],
+      input[type="date"],
+      input[type="time"],
+      input[type="number"],
+      select {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-sizing: border-box;
+      }
+
+      button {
+        padding: 10px 20px;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+
+      button:hover {
+        background-color: #0056b3;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      th,
+      td {
+        padding: 8px;
+        border-bottom: 1px solid #ddd;
+        text-align: left;
+      }
+
+      th {
+        background-color: #f2f2f2;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Admin Dashboard</h1>
+
+      <div class="section">
+        <h2>Add Flight</h2>
+        <form id="addFlightForm">
+          <input type="text" name="flightNum" placeholder="Flight Number" />
+          <input type="text" name="from" placeholder="From" />
+          <input type="text" name="to" placeholder="To" />
+          <input type="date" name="date" placeholder="Date" />
+          <input
+            type="time"
+            name="departureTime"
+            placeholder="Departure Time"
+          />
+          <input type="time" name="arrivalTime" placeholder="Arrival Time" />
+          <input type="number" name="price" placeholder="Price" />
+          <input type="number" name="seats" placeholder="Seats" />
+          <button type="submit">Add Flight</button>
+        </form>
+      </div>
+
+      <div class="section">
+        <h2>View Bookings</h2>
+        <form id="viewBookingsForm">
+          <input type="text" name="flightNum" placeholder="Flight Number" />
+          <input type="time" name="flightTime" placeholder="Flight Time" />
+          <button type="submit">View Bookings</button>
+        </form>
+        <table id="bookingsTable">
+          <thead>
+            <tr>
+              <th>Flight Number</th>
+              <th>User Email</th>
+              <th>Number of Tickets</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Booking data will be populated here -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <script>
+      document
+        .getElementById("viewBookingsForm")
+        .addEventListener("submit", function (event) {
+          event.preventDefault();
+          const flightNum = document.querySelector(
+            'input[name="flightNum"]'
+          ).value;
+          const flightTime = document.querySelector(
+            'input[name="flightTime"]'
+          ).value;
+          fetch("http://127.0.0.1:5000/admin_view_bookings", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              // Add any necessary authentication headers here
+            },
+            body: JSON.stringify({
+              flightNum: flightNum,
+              flightTime: flightTime,
+            }),
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              const bookingsTable = document
+                .getElementById("bookingsTable")
+                .querySelector("tbody");
+              // Clear previous bookings
+              bookingsTable.innerHTML = "";
+              // Populate bookings
+              data.flight_bookings.forEach((booking) => {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${booking.flightNum}</td>
+                    <td>${booking.userEmail}</td>
+                    <td>${booking.tickets}</td>
+                `;
+                bookingsTable.appendChild(row);
+              });
+            })
+            .catch((error) => {
+              console.error("Error:", error);
+            });
+        });
+
+      document
+        .getElementById("addFlightForm")
+        .addEventListener("submit", function (event) {
+          event.preventDefault();
+          const flightNum = document.querySelector(
+            'input[name="flightNum"]'
+          ).value;
+          const to = document.querySelector('input[name="to"]').value;
+          const from = document.querySelector('input[name="from"]').value;
+          const date = document.querySelector('input[name="date"]').value;
+          const Dtime = document.querySelector(
+            'input[name="departureTime"]'
+          ).value;
+          const ATime = document.querySelector(
+            'input[name="arrivalTime"]'
+          ).value;
+          // console.log(ATime)
+          const price = document.querySelector('input[name="price"]').value;
+          const seats = parseInt(
+            document.querySelector('input[name="seats"]').value
+          );
+
+          const flightData = {
+            flightNum: flightNum,
+            to: to,
+            from: from,
+            date: date,
+            Dtime: Dtime,
+            ATime: ATime,
+            price: price,
+            seats: seats,
+          };
+          // Make fetch request to add flight
+          fetch("http://127.0.0.1:5000/admin/addflight", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              // Add any necessary authentication headers here
+            },
+            body: JSON.stringify(flightData),
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              alert("Flight added successfully");
+              console.log("Flight added successfully:", data);
+            })
+            .catch((error) => {
+              console.error("Error:", error);
+            });
+        });
+    </script>
+  </body>
+</html>

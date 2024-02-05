@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Flight Management System</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: rgb(171, 171, 171);
+      }
+
+      .container {
+        max-width: 800px;
+        margin: 20px auto;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+
+      h1 {
+        text-align: center;
+        color: #333;
+      }
+
+      .section {
+        margin-bottom: 20px;
+        padding: 20px;
+        background-color: #f9f9f9;
+        border-radius: 8px;
+      }
+
+      input[type="text"],
+      input[type="date"],
+      input[type="time"],
+      input[type="number"],
+      select {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-sizing: border-box;
+      }
+
+      button {
+        padding: 10px 20px;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+
+      button:hover {
+        background-color: #0056b3;
+      }
+
+      .bookings {
+        margin-top: 20px;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      th,
+      td {
+        padding: 8px;
+        border-bottom: 1px solid #ddd;
+        text-align: left;
+      }
+
+      th {
+        background-color: #f2f2f2;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Flight Management System</h1>
+
+      <div class="section">
+        <h2>Search Flight</h2>
+        <form id="searchFlightForm">
+          <input
+            type="text"
+            id="fromCity"
+            name="from"
+            placeholder="From City"
+          />
+          <input type="text" id="toCity" name="to" placeholder="To City" />
+          <input type="date" id="searchDate" name="date" placeholder="Date" />
+          <input type="time" id="searchTime" name="time" placeholder="Time" />
+          <button type="submit">Search</button>
+        </form>
+
+        <div id="searchResults" style="display: none">
+          <h3>Search Results</h3>
+          <table id="searchResultsTable">
+            <thead>
+              <tr>
+                <th>Flight Number</th>
+                <th>From</th>
+                <th>To</th>
+                <th>Date</th>
+                <th>Departure Time</th>
+                <th>Arrival Time</th>
+                <th>Available Seats</th>
+                <th>Price</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Search results will be populated here -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="section bookings">
+        <h2>All Bookings</h2>
+        <button id="showAllBookings">Show All Bookings</button>
+        <table id="bookingsTable">
+          <thead>
+            <tr>
+              <th>Flight No.</th>
+              <th>From</th>
+              <th>To</th>
+              <th>Date</th>
+              <th>Departure Time</th>
+              <th>Arrival Time</th>
+              <th>Number of Tickets</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Bookings data will be populated here -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <script>
+      document
+        .getElementById("searchFlightForm")
+        .addEventListener("submit", async function (event) {
+          event.preventDefault();
+          const fromCity = document.getElementById("fromCity").value;
+          const toCity = document.getElementById("toCity").value;
+          const searchDate = document.getElementById("searchDate").value;
+          const searchTime = document.getElementById("searchTime").value;
+
+          await fetch("http://127.0.0.1:5000/getflight", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              from: fromCity,
+              to: toCity,
+              date: searchDate,
+              time: searchTime,
+            }),
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              const searchResultsTable =
+                document.getElementById("searchResultsTable");
+              const searchResultsBody =
+                searchResultsTable.querySelector("tbody");
+
+              searchResultsBody.innerHTML = "";
+              let flightsArr = data["flights"];
+              flightsArr.forEach((flight) => {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                      <td>${flight.flightNum}</td>
+                      <td>${flight.from}</td>
+                      <td>${flight.to}</td>
+                      <td>${formatDate(flight.date)}</td>
+                      <td>${flight.Dtime}</td>
+                      <td>${flight.ATime}</td>
+                      <td>${flight.seats}</td>
+                      <td>${flight.price}</td>
+                      <td><button class="bookBtn">Book</button></td>
+                  `;
+                searchResultsBody.appendChild(row);
+              });
+              document.getElementById("searchResults").style.display = "block";
+            });
+        });
+
+        document.getElementById("searchResultsTable").addEventListener("click", function(event) {
+    const target = event.target;
+    if (target.tagName === "BUTTON") {
+        const row = target.closest("tr");
+        const flightNum = row.cells[0].textContent;
+        const fromCity = row.cells[1].textContent;
+        const toCity = row.cells[2].textContent;
+        const date = row.cells[3].textContent;
+        const departureTime = row.cells[4].textContent;
+        const arrivalTime = row.cells[5].textContent;
+        const price = row.cells[7].textContent;
+
+        // Prompt user to enter number of tickets
+        const numTickets = prompt("Enter number of tickets to book:");
+        let priceTotal = 0;
+        if (numTickets) {
+            // Make fetch request to book the flight
+            priceTotal = parseInt(numTickets)*parseInt(price)
+            fetch("http://127.0.0.1:5000/bookflight", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    flightNum: flightNum,
+                    ticketsBook: parseInt(numTickets),
+                    from: fromCity,
+                    to: toCity,
+                    date: date,
+                    Dtime: departureTime,
+                    Atime: arrivalTime,
+                }),
+            })
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error('Failed to book flight');
+                }
+                return response.json();
+            })
+            .then((data) => {
+                alert(`Tickets booked successfully.The Amount Total is: Rs ${priceTotal}`);
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+        }
+    }
+});
+
+
+      document
+        .getElementById("showAllBookings")
+        .addEventListener("click", async function () {
+          await fetch("http://127.0.0.1:5000/user/bookings", {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          })
+            .then((response) => {
+              if (!response.ok) {
+                throw new Error("Failed to fetch bookings");
+              }
+              return response.json();
+            })
+            .then((data) => {
+              const bookingsTable = document.getElementById("bookingsTable");
+              const bookingsBody = bookingsTable.querySelector("tbody");
+
+              // Clear previous booking data
+              bookingsBody.innerHTML = "";
+              console.log(data)
+              // Populate booking data
+              data.user_bookings.forEach((booking) => {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                <td>${booking.flightNum}</td>
+                <td>${booking.from}</td>
+                <td>${booking.to}</td>
+                <td>${formatDate(booking.date)}</td>
+                <td>${booking.Dtime}</td>
+                <td>${booking.Atime}</td>
+                <td>${booking.seatsBooked}</td>
+            `;
+                bookingsBody.appendChild(row);
+              });
+            })
+            .catch((error) => {
+              console.error("Error:", error);
+            });
+        });
+      function formatDate(dateString) {
+        const date = new Date(dateString);
+        const day = date.getDate().toString().padStart(2, "0");
+        const month = (date.getMonth() + 1).toString().padStart(2, "0");
+        const year = date.getFullYear();
+        return `${day}-${month}-${year}`;
+      }
+    </script>
+  </body>
+</html>

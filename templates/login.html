@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: rgb(171, 171, 171);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .card {
+            width: 300px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+        }
+
+        .field-group {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            text-align: left;
+        }
+
+        .field-group label {
+            flex: 1;
+            margin-right: 10px;
+        }
+
+        .field {
+            flex: 2;
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background-color: #0056b3;
+        }
+
+        .errorHidden {
+            display: none;
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-page">
+        <div class="card">
+            <h1>Login Page</h1>
+            <form name="loginForm" id="loginForm">
+                <div class="field-group">
+                    <label for="email">Email</label>
+                    <input type="email" name="email" class="field" required>
+                </div>
+                <div class="field-group">
+                    <label for="password">Password</label>
+                    <input type="password" name="password" class="field" required>
+                </div>
+                <div class="field-group">
+                    <label for="type">Type</label>
+                    <select id="type" name="type" class="field">
+                        <option value="user" selected="selected">User</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                </div>
+                <p class="errorHidden"></p>
+                <input type="submit" value="Login" class="btn">
+            </form>
+        </div>
+    </div>
+</body>
+</html>
